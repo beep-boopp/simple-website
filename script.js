@@ -1,5 +1,5 @@
 // Contract details
-const contractAddress = "YOUR_CONTRACT_ADDRESS"; // Paste your contract address here
+const contractAddress = "0x9396B453Fad71816cA9f152Ae785276a1D578492"; // Paste your contract address here
 const contractABI = [
   "function upvote() external",
   "function downvote() external",
