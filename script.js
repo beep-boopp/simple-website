@@ -1,13 +1,41 @@
-let upvotes = 0;
-let downvotes = 0;
+// Contract details
+const contractAddress = "YOUR_CONTRACT_ADDRESS"; // Paste your contract address here
+const contractABI = [
+  "function upvote() external",
+  "function downvote() external",
+  "function getVotes() external view returns (uint256, uint256)"
+];
 
-document.getElementById('upvote').addEventListener('click', () => {
-  upvotes++;
+// Connect to MetaMask and initialize contract
+async function connect() {
+  if (!window.ethereum) return alert("Please install MetaMask!");
+  const provider = new ethers.providers.Web3Provider(window.ethereum);
+  await provider.send("eth_requestAccounts", []); // Request account access
+  const signer = provider.getSigner();
+  return new ethers.Contract(contractAddress, contractABI, signer);
+}
+
+// Update vote counts
+async function updateVotes(contract) {
+  const [upvotes, downvotes] = await contract.getVotes();
   document.getElementById('upvote-count').textContent = upvotes;
-});
-
-document.getElementById('downvote').addEventListener('click', () => {
-  downvotes++;
   document.getElementById('downvote-count').textContent = downvotes;
-});
-//what tf
+}
+
+// Initialize
+(async () => {
+  const contract = await connect();
+  await updateVotes(contract);
+
+  // Upvote
+  document.getElementById('upvote').addEventListener('click', async () => {
+    await contract.upvote();
+    await updateVotes(contract);
+  });
+
+  // Downvote
+  document.getElementById('downvote').addEventListener('click', async () => {
+    await contract.downvote();
+    await updateVotes(contract);
+  });
+})();
